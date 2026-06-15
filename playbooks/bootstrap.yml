@@ -1,0 +1,7 @@
+---
+- name: Bootstrap Raspberry Pi
+  hosts: all
+
+  roles:
+    - common
+
