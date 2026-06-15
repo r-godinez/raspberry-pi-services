@@ -9,17 +9,9 @@
 
 - name: Install common packages
   ansible.builtin.apt:
-    name:
-      - curl
-      - git
-      - vim
-      - htop
-      - unzip
-      - net-tools
-      - dnsutils
-      - jq
+    name: "{{ common_packages }}"
     state: present
 
 - name: Set timezone
   community.general.timezone:
-    name: America/Los_Angeles
+    name: "{{ timezone }}"

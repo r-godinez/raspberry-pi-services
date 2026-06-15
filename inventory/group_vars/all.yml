@@ -1,0 +1,11 @@
+timezone: America/Los_Angeles
+
+common_packages:
+  - curl
+  - git
+  - vim
+  - htop
+  - unzip
+  - net-tools
+  - dnsutils
+  - jq
