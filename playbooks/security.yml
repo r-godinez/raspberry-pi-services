@@ -1,0 +1,8 @@
+---
+- name: Apply security hardening
+  hosts: pi3
+  become: true
+
+  roles:
+    - role: security
+      tags: [security]

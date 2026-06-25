@@ -1,0 +1,27 @@
+---
+# Service restarts triggered by changes
+- name: Reload ufw
+  community.general.ufw:
+    state: enabled
+  listen: Reload ufw
+
+- name: Restart fail2ban
+  ansible.builtin.service:
+    name: fail2ban
+    state: restarted
+  listen: Restart fail2ban
+  when: not ansible_check_mode
+
+- name: Restart sshd
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
+  listen: Restart sshd
+  when: not ansible_check_mode
+
+- name: Restart auditd
+  ansible.builtin.service:
+    name: auditd
+    state: restarted
+  listen: Restart auditd
+  when: not ansible_check_mode

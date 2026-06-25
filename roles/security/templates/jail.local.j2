@@ -1,0 +1,28 @@
+# Managed by Ansible — do not edit manually
+# Role: security | Template: jail.local.j2
+
+[DEFAULT]
+# Ban duration
+bantime  = {{ fail2ban_bantime }}
+
+# Window in which maxretry failures triggers a ban
+findtime = {{ fail2ban_findtime }}
+
+# Number of failures before ban
+maxretry = {{ fail2ban_maxretry }}
+
+# Use systemd backend (Ubuntu 20.04+)
+backend = systemd
+
+# Don't ban localhost or Tailscale range
+ignoreip = 127.0.0.1/8 ::1 {{ tailscale_subnet }}
+
+# Increase ban time for repeat offenders
+bantime.increment = true
+bantime.multiplier = 2
+
+[sshd]
+enabled  = true
+port     = {{ ssh_port }}
+filter   = sshd
+maxretry = {{ fail2ban_maxretry }}

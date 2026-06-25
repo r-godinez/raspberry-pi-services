@@ -1,0 +1,41 @@
+# Managed by Ansible — do not edit manually
+# Role: security | Template: audit.rules.j2
+# Based on CIS Benchmark recommendations
+
+# Remove all existing rules
+-D
+
+# Set buffer size (increase if you see dropped events)
+-b 8192
+
+# Failure mode: 1=log, 2=panic
+-f 1
+
+# Track authentication events
+-w /var/log/auth.log -p wa -k auth_events
+-w /etc/passwd -p wa -k user_accounts
+-w /etc/group -p wa -k group_accounts
+-w /etc/shadow -p wa -k shadow_file
+-w /etc/sudoers -p wa -k sudoers
+
+# Track SSH configuration changes
+-w /etc/ssh/sshd_config -p wa -k ssh_config
+
+# Track privileged command execution
+-a always,exit -F arch=b64 -S execve -F euid=0 -k root_commands
+-a always,exit -F arch=b32 -S execve -F euid=0 -k root_commands
+
+# Track sudo usage
+-w /usr/bin/sudo -p x -k sudo_usage
+
+# Track network configuration changes
+-w /etc/hosts -p wa -k network_config
+-w /etc/network/ -p wa -k network_config
+
+# Track cron modifications
+-w /etc/cron.d/ -p wa -k cron_changes
+-w /etc/crontab -p wa -k cron_changes
+-w /var/spool/cron/ -p wa -k cron_changes
+
+# Make rules immutable (requires reboot to change — uncomment when stable)
+# -e 2

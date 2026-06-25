@@ -1,0 +1,44 @@
+# Managed by Ansible — do not edit manually
+# Role: security | Template: sshd_config.j2
+
+# Network
+Port {{ ssh_port }}
+AddressFamily inet
+ListenAddress 0.0.0.0
+
+# Authentication
+PermitRootLogin {{ ssh_permit_root_login }}
+PasswordAuthentication {{ ssh_password_authentication }}
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
+MaxAuthTries {{ ssh_max_auth_tries }}
+MaxSessions 10
+
+# Restrict users if list is populated
+{% if ssh_allow_users %}
+AllowUsers {{ ssh_allow_users | join(' ') }}
+{% endif %}
+
+# Session security
+LoginGraceTime 30
+ClientAliveInterval 300
+ClientAliveCountMax 2
+
+# Disable unnecessary features
+X11Forwarding no
+AllowAgentForwarding no
+AllowTcpForwarding no
+PermitEmptyPasswords no
+PermitUserEnvironment no
+
+# Use modern crypto only
+KexAlgorithms curve25519-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+
+# Logging
+SyslogFacility AUTH
+LogLevel VERBOSE
+
+# SFTP subsystem
+Subsystem sftp /usr/lib/openssh/sftp-server

@@ -1,0 +1,45 @@
+---
+- name: UFW | Install ufw
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+    update_cache: true
+
+- name: UFW | Set default incoming policy to deny
+  community.general.ufw:
+    default: deny
+    direction: incoming
+  notify: Reload ufw
+
+- name: UFW | Set default outgoing policy to allow
+  community.general.ufw:
+    default: allow
+    direction: outgoing
+  notify: Reload ufw
+
+- name: UFW | Allow Tailscale subnet (full access over VPN)
+  community.general.ufw:
+    rule: allow
+    src: "{{ tailscale_subnet }}"
+    comment: "Tailscale VPN"
+  notify: Reload ufw
+
+- name: UFW | Allow configured ports
+  community.general.ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    comment: "{{ item.comment }}"
+  loop: "{{ ufw_allowed_ports }}"
+  notify: Reload ufw
+
+- name: UFW | Allow Tailscale interface (tun/utun traffic)
+  community.general.ufw:
+    rule: allow
+    interface: tailscale0
+    direction: in
+  notify: Reload ufw
+
+- name: UFW | Enable UFW
+  community.general.ufw:
+    state: enabled

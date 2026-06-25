@@ -1,0 +1,32 @@
+---
+- name: SSH | Ensure SSH is installed
+  ansible.builtin.apt:
+    name: openssh-server
+    state: present
+
+- name: SSH | Ensure privilege separation directory exists
+  ansible.builtin.file:
+    path: /run/sshd
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: SSH | Deploy hardened sshd_config
+  ansible.builtin.template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart sshd
+
+- name: SSH | Validate sshd config on target host
+  ansible.builtin.command:
+    cmd: sshd -t
+  changed_when: false
+  check_mode: false
+
+- name: SSH | Ensure SSH service is enabled and running
+  ansible.builtin.service:
+    name: ssh

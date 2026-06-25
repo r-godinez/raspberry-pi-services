@@ -1,14 +1,20 @@
 ---
-- name: Install unattended upgrades
-  ansible.builtin.apt:
-    name:
-      - unattended-upgrades
-      - apt-listchanges
-    state: present
+- name: Security | UFW firewall
+  ansible.builtin.import_tasks: ufw.yml
+  tags: [security, ufw]
 
-- name: Enable unattended upgrades
-  ansible.builtin.copy:
-    dest: /etc/apt/apt.conf.d/20auto-upgrades
-    content: |
-      APT::Periodic::Update-Package-Lists "1";
-      APT::Periodic::Unattended-Upgrade "1";
+- name: Security | SSH hardening
+  ansible.builtin.import_tasks: ssh.yml
+  tags: [security, ssh]
+
+- name: Security | Fail2ban
+  ansible.builtin.import_tasks: fail2ban.yml
+  tags: [security, fail2ban]
+
+- name: Security | Automatic updates
+  ansible.builtin.import_tasks: updates.yml
+  tags: [security, updates]
+
+- name: Security | Auditd
+  ansible.builtin.import_tasks: auditd.yml
+  tags: [security, auditd]
